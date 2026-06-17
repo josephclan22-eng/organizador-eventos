@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Sparkles } from 'lucide-react';
 
 interface LoginProps {
   onSignIn: (nome: string) => void;
@@ -13,50 +14,59 @@ export function Login({ onSignIn }: LoginProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gray-950 flex items-center justify-center p-4">
-      <div className="w-full max-w-sm">
-        <div className="text-center mb-8">
-          <div className="flex items-center justify-center gap-2 mb-4">
-            <div className="flex items-center gap-1">
-              <span className="w-4 h-4 rounded-full bg-blue-500" />
-              <span className="w-4 h-4 rounded-full bg-green-500" />
-              <span className="w-4 h-4 rounded-full bg-yellow-500" />
+    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
+      <div className="floating-orbs">
+        <div className="orb orb-1" />
+        <div className="orb orb-2" />
+        <div className="orb orb-3" />
+      </div>
+
+      <div className="w-full max-w-md relative z-10 animate-fade-in">
+        <div className="text-center mb-10">
+          <div className="flex items-center justify-center gap-2 mb-6">
+            <div className="flex items-center gap-1.5">
+              <div className="w-4 h-4 rounded-full bg-[#FF6B35] shadow-[0_0_12px_rgba(255,107,53,0.5)]" />
+              <div className="w-4 h-4 rounded-full bg-[#4CAF50] shadow-[0_0_12px_rgba(76,175,80,0.5)]" />
+              <div className="w-4 h-4 rounded-full bg-[#FFB703] shadow-[0_0_12px_rgba(255,183,3,0.5)]" />
             </div>
           </div>
-          <h1 className="text-2xl font-bold text-white">Organizador CCB</h1>
-          <p className="text-gray-500 text-sm mt-2">
-            Gerencie suas atividades: Trabalho, Pessoal e CCB
-          </p>
+          <h1 className="text-5xl font-bold mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>
+            Organizador<span className="text-[#FFB703]">.</span>
+          </h1>
+          <p className="text-[#6B7280] text-sm">Equilibre sua vida em três áreas</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="bg-gray-900 border border-gray-800 rounded-2xl p-6 space-y-4">
-          <h2 className="text-lg font-semibold text-white text-center">
-            Bem-vindo!
-          </h2>
-
-          <div>
-            <label className="block text-sm text-gray-400 mb-1">Seu Nome</label>
-            <input
-              value={nome}
-              onChange={e => setNome(e.target.value)}
-              required
-              className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm focus:outline-none focus:border-gray-600"
-              placeholder="Digite seu nome"
-            />
+        <div
+          className="rounded-2xl p-8 backdrop-blur-xl"
+          style={{
+            background: 'linear-gradient(135deg, rgba(31,40,51,0.8), rgba(15,20,28,0.9))',
+            border: '1px solid rgba(255,255,255,0.06)',
+          }}
+        >
+          <div className="flex items-center gap-2 mb-6">
+            <Sparkles className="w-4 h-4 text-[#FFB703]" />
+            <span className="text-xs text-[#6B7280] tracking-widest uppercase font-medium">Comece agora</span>
           </div>
 
-          <button
-            type="submit"
-            disabled={!nome.trim()}
-            className="w-full py-2.5 bg-yellow-600 hover:bg-yellow-500 disabled:bg-yellow-600/50 text-white font-medium rounded-lg transition-colors text-sm"
-          >
-            Entrar
-          </button>
-
-          <p className="text-xs text-gray-600 text-center">
-            Seus dados ficam salvos apenas neste navegador
-          </p>
-        </form>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label className="block text-xs text-[#6B7280] font-medium mb-1.5 tracking-wide uppercase">Seu nome</label>
+              <input
+                value={nome}
+                onChange={e => setNome(e.target.value)}
+                required
+                className="input-moderno"
+                placeholder="Digite seu nome"
+              />
+            </div>
+            <button type="submit" disabled={!nome.trim()} className="btn-primary w-full">
+              Entrar
+            </button>
+            <p className="text-[10px] text-[#4B5563] text-center">
+              Seus dados ficam salvos apenas neste navegador
+            </p>
+          </form>
+        </div>
       </div>
     </div>
   );
