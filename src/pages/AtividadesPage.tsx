@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Plus, Search } from 'lucide-react';
-import type { Atividade, Categoria, StatusAtividade } from '../types';
+import type { Atividade, Categoria, Prioridade, StatusAtividade } from '../types';
 import { AtividadeCard } from '../components/AtividadeCard';
 import { NovaAtividadeModal } from '../components/NovaAtividadeModal';
 
@@ -8,7 +8,7 @@ interface AtividadesPageProps {
   atividades: Atividade[];
   addAtividade: (atividade: {
     titulo: string; descricao: string; categoria: Categoria;
-    prioridade: string; data_inicio: string; data_fim: string;
+    prioridade: Prioridade; data_inicio: string; data_fim: string;
     horario: string; local: string; alerta_antecipado: number;
   }) => Promise<void>;
   updateAtividade: (id: string, updates: Record<string, unknown>) => void;

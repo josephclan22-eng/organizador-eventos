@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import type { Atividade } from '../types';
+import { updateAtividade } from '../lib/storage';
 
 const ALERT_SOUND = `
 data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACAf39/f4B/gH+Af4B/gH+Af4B/f3+AgH+Af39/f3+Af3+Af39/f3+Af39/f3+Af39/gH+Af4B/gH+Af4B/gH+Af39/f4B/gH+Af39/f3+Af3+Af39/f3+Af39/f3+Af39/gH+Af4B/gH+Af4B/gH+Af39/f4B/gH+Af39/f3+Af3+Af39/f3+Af39/f3+Af39/gH+Af4B/gH+Af4B/gH+Af39/f4B/gH+Af39/f3+Af3+Af39/f3+Af39/f3+Af39/gH+Af4B/gH+Af4B/gH+Af39/f4B/gH+Af39/f3+Af3+Af39/f3+Af39/f3+Af39/gH+Af4B/gH+Af4B/gH+Af39/f4B/gH+Af39/f3+Af3+Af39/f3+Af39/f3+Af39/gH+Af4B/gH+Af4B/gH+Af39/f4B/gH+Af39/f3+Af3+Af39/f3+Af39/f3+Af39/gH+Af4B/gH+Af4B/gH+Af39/f4B/gH+Af39/f3+Af3+Af39/f3+Af39/f3+Af39/gH+Af4B/gH+Af4B/gH+Af39/f4B/gH+Af39/f3+Af3+Af39/f3+Af39/f3+Af39/gH+Af4B/gH+Af4B/gH+Af39/f4B/gH+Af39/f3+Af3+Af39/f3+Af39/f3+Af39/gH+Af4B/gH+Af4B/gH+Af39/f4B/gH+Af39/f3+Af3+Af39/f3+Af39/f3+Af39/gH+Af4B/gH+Af4B/gH+Af39/f4B/gH+Af39/f3+Af3+Af39/f3+Af39/f3+Af39/gH+Af4B/gH+Af4B/gH+Af39/f4B/gH+Af39/f3+Af3+Af39/f3+Af39/f3+Af39/gH+Af4B/gH+Af4B/gH+Af39/f4B/gH+Af39/f3+Af3+Af39/f3+Af39/f3+Af39/gH+Af4B/gH+Af4B/gH+Af39/f4B/gH+Af39/f3+Af3+Af39/f3+Af39/f3+Af39/gH+Af4B/gH+Af4B/gH+Af39/f4B/gH+Af39/f3+Af3+Af39/f3+Af39/f3+Af39/gH+Af4B/gH+Af4B/gH+Af39/f4B/gH+Af39/f3+Af3+Af39/f3+Af39/f3+Af39/gH+Af4B/gH+Af4B/gH+Af39/f4B/gH+Af39/f3+Af3+Af39/f3+Af39/f3+Af39/gH+Af4B/gH+Af4B/gH+Af39/f4B/gH+Af39/f3+Af3+Af39/f3+Af39/f3+Af39/gH+Af4B/gH+Af4B/gH+Af39/f4B/gH+Af39/f3+Af3+Af39/f3+Af39/f3+Af39/gH+Af4B/gH+Af4B/gH+Af39/f4B/gH+Af39/f3+Af3+Af39/f3+Af39/f3+Af39/gH+Af4B/gH+Af4B/gH+A;
@@ -53,7 +54,7 @@ export function useAlertas(atividades: Atividade[]) {
         });
 
         ativos.forEach(a => {
-          supabaseUpdateNotificado(a.id);
+          updateAtividade(a.id, { notificado: true });
         });
       }
     };
@@ -67,11 +68,6 @@ export function useAlertas(atividades: Atividade[]) {
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
   }, [atividades, tocarAlerta]);
-
-  const supabaseUpdateNotificado = async (id: string) => {
-    const { supabase } = await import('../lib/supabase');
-    await supabase.from('atividades').update({ notificado: true } as Record<string, unknown>).eq('id', id);
-  };
 
   const dismissAlerta = useCallback((id: string) => {
     setAlertasAtivos(prev => prev.filter(a => a.id !== id));

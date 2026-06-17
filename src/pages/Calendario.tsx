@@ -1,13 +1,13 @@
 import { useState, useMemo } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import type { Atividade, Categoria } from '../types';
+import type { Atividade, Categoria, Prioridade } from '../types';
 import { NovaAtividadeModal } from '../components/NovaAtividadeModal';
 
 interface CalendarioProps {
   atividades: Atividade[];
   addAtividade: (atividade: {
     titulo: string; descricao: string; categoria: Categoria;
-    prioridade: string; data_inicio: string; data_fim: string;
+    prioridade: Prioridade; data_inicio: string; data_fim: string;
     horario: string; local: string; alerta_antecipado: number;
   }) => Promise<void>;
   updateAtividade: (id: string, updates: Record<string, unknown>) => void;

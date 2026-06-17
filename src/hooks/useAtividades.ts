@@ -1,73 +1,49 @@
-import { useState, useEffect, useCallback } from 'react';
-import { supabase } from '../lib/supabase';
-import type { Atividade, Categoria, StatusAtividade } from '../types';
-import { atividadesSeed } from '../lib/seed';
+import { useState, useCallback, useEffect } from 'react';
+import type { Atividade, Categoria, Prioridade, StatusAtividade } from '../types';
+import {
+  getAtividades,
+  addAtividade as addStorage,
+  updateAtividade as updateStorage,
+  deleteAtividade as deleteStorage,
+  seedAtividades as seedStorage,
+} from '../lib/storage';
 
-export function useAtividades(userId: string | undefined) {
+export function useAtividades() {
   const [atividades, setAtividades] = useState<Atividade[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchAtividades = useCallback(async () => {
-    if (!userId) return;
-    const { data } = await supabase
-      .from('atividades')
-      .select('*')
-      .eq('user_id', userId)
-      .order('data_inicio', { ascending: true })
-      .order('horario', { ascending: true });
-    if (data) setAtividades(data as Atividade[]);
+  const refresh = useCallback(() => {
+    setAtividades(getAtividades());
     setLoading(false);
-  }, [userId]);
+  }, []);
 
   useEffect(() => {
-    fetchAtividades();
-    const channel = supabase
-      .channel('atividades_changes')
-      .on('postgres_changes',
-        { event: '*', schema: 'public', table: 'atividades', filter: `user_id=eq.${userId}` },
-        () => fetchAtividades()
-      )
-      .subscribe();
-    return () => { supabase.removeChannel(channel); };
-  }, [fetchAtividades, userId]);
+    refresh();
+  }, [refresh]);
 
   const seedAtividades = useCallback(async () => {
-    if (!userId) return;
-    const atividadesComUser = atividadesSeed.map(a => ({
-      ...a,
-      user_id: userId,
-    }));
-    const { error } = await supabase.from('atividades').insert(atividadesComUser);
-    if (error) throw error;
-    await fetchAtividades();
-  }, [userId, fetchAtividades]);
+    seedStorage();
+    refresh();
+  }, [refresh]);
 
   const addAtividade = useCallback(async (atividade: {
     titulo: string; descricao: string; categoria: Categoria;
-    prioridade: string; data_inicio: string; data_fim: string;
+    prioridade: Prioridade; data_inicio: string; data_fim: string;
     horario: string; local: string; alerta_antecipado: number;
   }) => {
-    if (!userId) return;
-    const { error } = await supabase.from('atividades').insert({
-      ...atividade,
-      user_id: userId,
-      status: 'pendente',
-    });
-    if (error) throw error;
-    await fetchAtividades();
-  }, [userId, fetchAtividades]);
+    addStorage(atividade);
+    refresh();
+  }, [refresh]);
 
   const updateAtividade = useCallback(async (id: string, updates: Record<string, unknown>) => {
-    const { error } = await supabase.from('atividades').update(updates).eq('id', id);
-    if (error) throw error;
-    await fetchAtividades();
-  }, [fetchAtividades]);
+    updateStorage(id, updates as Partial<Atividade>);
+    refresh();
+  }, [refresh]);
 
   const deleteAtividade = useCallback(async (id: string) => {
-    const { error } = await supabase.from('atividades').delete().eq('id', id);
-    if (error) throw error;
-    await fetchAtividades();
-  }, [fetchAtividades]);
+    deleteStorage(id);
+    refresh();
+  }, [refresh]);
 
   const getByCategoria = useCallback((cat: Categoria) => {
     return atividades.filter(a => a.categoria === cat);
@@ -78,7 +54,7 @@ export function useAtividades(userId: string | undefined) {
   }, [atividades]);
 
   const getByData = useCallback((data: string) => {
-    return atividades.filter(a => a.data_inicio === data || a.data_fim === data);
+    return atividades.filter(a => a.data_inicio === data);
   }, [atividades]);
 
   const hoje = useCallback(() => {
@@ -102,6 +78,6 @@ export function useAtividades(userId: string | undefined) {
 
   return {
     atividades, loading, seedAtividades, addAtividade, updateAtividade, deleteAtividade,
-    getByCategoria, getByStatus, getByData, hoje, proximas,
+    getByCategoria, getByStatus, getByData, hoje, proximas, refresh,
   };
 }

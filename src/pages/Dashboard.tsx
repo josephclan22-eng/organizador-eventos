@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { Plus, Briefcase, User, Cross, AlertCircle, Clock, TrendingUp } from 'lucide-react';
-import type { Atividade, Categoria } from '../types';
+import type { Atividade, Categoria, Prioridade } from '../types';
 import { AtividadeCard } from '../components/AtividadeCard';
 import { NovaAtividadeModal } from '../components/NovaAtividadeModal';
 
@@ -11,7 +11,7 @@ interface DashboardProps {
   atividades: Atividade[];
   addAtividade: (atividade: {
     titulo: string; descricao: string; categoria: Categoria;
-    prioridade: string; data_inicio: string; data_fim: string;
+    prioridade: Prioridade; data_inicio: string; data_fim: string;
     horario: string; local: string; alerta_antecipado: number;
   }) => Promise<void>;
   updateAtividade: (id: string, updates: Record<string, unknown>) => void;
