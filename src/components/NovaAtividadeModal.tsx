@@ -1,11 +1,11 @@
 import { useState } from 'react';
-import { X } from 'lucide-react';
+import { X, Sparkles } from 'lucide-react';
 import type { Categoria, Prioridade } from '../types';
 
-interface NovaAtividadeModalProps {
+interface Props {
   open: boolean;
   onClose: () => void;
-  onSave: (atividade: {
+  onSave: (a: {
     titulo: string; descricao: string; categoria: Categoria;
     prioridade: Prioridade; data_inicio: string; data_fim: string;
     horario: string; local: string; alerta_antecipado: number;
@@ -13,62 +13,70 @@ interface NovaAtividadeModalProps {
   categoriaPadrao?: Categoria;
 }
 
-export function NovaAtividadeModal({ open, onClose, onSave, categoriaPadrao }: NovaAtividadeModalProps) {
+export function NovaAtividadeModal({ open, onClose, onSave, categoriaPadrao }: Props) {
   const [titulo, setTitulo] = useState('');
-  const [descricao, setDescricao] = useState('');
-  const [categoria, setCategoria] = useState<Categoria>(categoriaPadrao || 'pessoal');
-  const [prioridade, setPrioridade] = useState<Prioridade>('media');
-  const [data_inicio, setDataInicio] = useState(new Date().toISOString().split('T')[0]);
-  const [horario, setHorario] = useState('12:00');
+  const [desc, setDesc] = useState('');
+  const [cat, setCat] = useState<Categoria>(categoriaPadrao || 'pessoal');
+  const [prior, setPrior] = useState<Prioridade>('media');
+  const [data, setData] = useState(new Date().toISOString().split('T')[0]);
+  const [hora, setHora] = useState('12:00');
   const [local, setLocal] = useState('');
-  const [alerta_antecipado, setAlertaAntecipado] = useState(30);
+  const [alerta, setAlerta] = useState(30);
 
   if (!open) return null;
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const submit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSave({ titulo, descricao, categoria, prioridade, data_inicio, data_fim: data_inicio, horario, local, alerta_antecipado });
-    setTitulo(''); setDescricao(''); setLocal('');
+    onSave({ titulo, descricao: desc, categoria: cat, prioridade: prior, data_inicio: data, data_fim: data, horario: hora, local, alerta_antecipado: alerta });
+    setTitulo(''); setDesc(''); setLocal('');
     onClose();
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[rgba(0,0,0,0.7)] backdrop-blur-sm" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-scale-in"
+      style={{ background: 'rgba(6,7,10,0.8)', backdropFilter: 'blur(8px)' }}
+      onClick={onClose}>
       <div
-        className="w-full max-w-lg mx-4 rounded-2xl overflow-hidden animate-scale-in"
-        style={{ background: 'linear-gradient(135deg, #1F2833, #151A22)', border: '1px solid rgba(255,255,255,0.06)' }}
+        className="w-full max-w-lg rounded-2xl overflow-hidden"
+        style={{
+          background: 'linear-gradient(160deg, rgba(20,23,31,0.95), rgba(10,13,18,0.98))',
+          border: '1px solid rgba(255,255,255,0.08)',
+          boxShadow: '0 24px 80px -20px rgba(0,0,0,0.6)',
+          backdropFilter: 'blur(40px)',
+        }}
         onClick={e => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between px-6 py-4 border-b border-[rgba(255,255,255,0.06)]">
-          <h2 className="text-lg font-semibold text-white" style={{ fontFamily: "'Playfair Display', serif" }}>
-            Nova Atividade
-          </h2>
-          <button onClick={onClose} className="p-2 rounded-xl text-[#6B7280] hover:text-white hover:bg-[rgba(255,255,255,0.06)] transition-all">
+        <div className="flex items-center justify-between px-6 py-5 border-b border-[rgba(255,255,255,0.06)]">
+          <div className="flex items-center gap-2.5">
+            <Sparkles className="w-4 h-4 text-[#F59E0B]" />
+            <h2 className="text-lg font-bold text-white" style={{ fontFamily: "'Playfair Display', serif" }}>Nova Atividade</h2>
+          </div>
+          <button onClick={onClose} className="p-2 rounded-xl text-[#475569] hover:text-white hover:bg-[rgba(255,255,255,0.06)] transition-all">
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+        <form onSubmit={submit} className="p-6 space-y-4">
           <div>
-            <label className="block text-xs text-[#6B7280] font-medium mb-1.5 tracking-wide uppercase">Título</label>
-            <input value={titulo} onChange={e => setTitulo(e.target.value)} required className="input-moderno" placeholder="Digite o título da atividade" />
+            <label className="label-overline block mb-2">Título</label>
+            <input value={titulo} onChange={e => setTitulo(e.target.value)} required className="input-glass" placeholder="Ex: Reunião de planejamento" />
           </div>
           <div>
-            <label className="block text-xs text-[#6B7280] font-medium mb-1.5 tracking-wide uppercase">Descrição</label>
-            <textarea value={descricao} onChange={e => setDescricao(e.target.value)} rows={2} className="input-moderno" placeholder="Descrição opcional" />
+            <label className="label-overline block mb-2">Descrição</label>
+            <textarea value={desc} onChange={e => setDesc(e.target.value)} rows={2} className="input-glass" placeholder="Detalhes da atividade..." />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs text-[#6B7280] font-medium mb-1.5 tracking-wide uppercase">Categoria</label>
-              <select value={categoria} onChange={e => setCategoria(e.target.value as Categoria)} className="input-moderno">
+              <label className="label-overline block mb-2">Categoria</label>
+              <select value={cat} onChange={e => setCat(e.target.value as Categoria)} className="input-glass">
                 <option value="trabalho">Trabalho</option>
                 <option value="pessoal">Pessoal</option>
                 <option value="ccb">CCB</option>
               </select>
             </div>
             <div>
-              <label className="block text-xs text-[#6B7280] font-medium mb-1.5 tracking-wide uppercase">Prioridade</label>
-              <select value={prioridade} onChange={e => setPrioridade(e.target.value as Prioridade)} className="input-moderno">
+              <label className="label-overline block mb-2">Prioridade</label>
+              <select value={prior} onChange={e => setPrior(e.target.value as Prioridade)} className="input-glass">
                 <option value="baixa">Baixa</option>
                 <option value="media">Média</option>
                 <option value="alta">Alta</option>
@@ -77,23 +85,23 @@ export function NovaAtividadeModal({ open, onClose, onSave, categoriaPadrao }: N
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs text-[#6B7280] font-medium mb-1.5 tracking-wide uppercase">Data</label>
-              <input type="date" value={data_inicio} onChange={e => setDataInicio(e.target.value)} className="input-moderno" />
+              <label className="label-overline block mb-2">Data</label>
+              <input type="date" value={data} onChange={e => setData(e.target.value)} className="input-glass" />
             </div>
             <div>
-              <label className="block text-xs text-[#6B7280] font-medium mb-1.5 tracking-wide uppercase">Horário</label>
-              <input type="time" value={horario} onChange={e => setHorario(e.target.value)} className="input-moderno" />
+              <label className="label-overline block mb-2">Horário</label>
+              <input type="time" value={hora} onChange={e => setHora(e.target.value)} className="input-glass" />
             </div>
           </div>
           <div>
-            <label className="block text-xs text-[#6B7280] font-medium mb-1.5 tracking-wide uppercase">Local</label>
-            <input value={local} onChange={e => setLocal(e.target.value)} className="input-moderno" placeholder="Onde será a atividade" />
+            <label className="label-overline block mb-2">Local</label>
+            <input value={local} onChange={e => setLocal(e.target.value)} className="input-glass" placeholder="Onde será?" />
           </div>
           <div>
-            <label className="block text-xs text-[#6B7280] font-medium mb-1.5 tracking-wide uppercase">Alerta (minutos antes)</label>
-            <input type="number" value={alerta_antecipado} onChange={e => setAlertaAntecipado(Number(e.target.value))} min={0} className="input-moderno" />
+            <label className="label-overline block mb-2">Alerta (min antes)</label>
+            <input type="number" value={alerta} onChange={e => setAlerta(Number(e.target.value))} min={0} className="input-glass" />
           </div>
-          <button type="submit" className="btn-primary w-full mt-2">
+          <button type="submit" className="btn-primary w-full justify-center py-3 text-[15px] mt-2">
             Criar Atividade
           </button>
         </form>

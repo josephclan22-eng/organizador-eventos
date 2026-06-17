@@ -1,94 +1,81 @@
 import { useState } from 'react';
-import { Plus, Search, Sparkles } from 'lucide-react';
+import { Plus, Search, ListFilter } from 'lucide-react';
 import type { Atividade, Categoria, Prioridade, StatusAtividade } from '../types';
 import { AtividadeCard } from '../components/AtividadeCard';
 import { NovaAtividadeModal } from '../components/NovaAtividadeModal';
 
-interface AtividadesPageProps {
+interface Props {
   atividades: Atividade[];
-  addAtividade: (atividade: {
-    titulo: string; descricao: string; categoria: Categoria;
-    prioridade: Prioridade; data_inicio: string; data_fim: string;
-    horario: string; local: string; alerta_antecipado: number;
-  }) => Promise<void>;
-  updateAtividade: (id: string, updates: Record<string, unknown>) => void;
+  addAtividade: (a: { titulo: string; descricao: string; categoria: Categoria; prioridade: Prioridade; data_inicio: string; data_fim: string; horario: string; local: string; alerta_antecipado: number }) => Promise<void>;
+  updateAtividade: (id: string, u: Record<string, unknown>) => void;
   deleteAtividade: (id: string) => void;
   categoriaPadrao?: Categoria;
   titulo: string;
 }
 
-const statusOptions: { value: StatusAtividade | 'todas'; label: string }[] = [
+const statusOpts: { value: StatusAtividade | 'todas'; label: string }[] = [
   { value: 'todas', label: 'Todas' },
-  { value: 'pendente', label: 'Pendente' },
+  { value: 'pendente', label: 'Pendentes' },
   { value: 'em_andamento', label: 'Em Andamento' },
-  { value: 'concluida', label: 'Concluída' },
-  { value: 'cancelada', label: 'Cancelada' },
+  { value: 'concluida', label: 'Concluídas' },
+  { value: 'cancelada', label: 'Canceladas' },
 ];
 
-export function AtividadesPage({ atividades, addAtividade, updateAtividade, deleteAtividade, categoriaPadrao, titulo }: AtividadesPageProps) {
+export function AtividadesPage({ atividades, addAtividade, updateAtividade, deleteAtividade, categoriaPadrao, titulo }: Props) {
   const [modalOpen, setModalOpen] = useState(false);
   const [search, setSearch] = useState('');
-  const [statusFiltro, setStatusFiltro] = useState<StatusAtividade | 'todas'>('todas');
+  const [statusF, setStatusF] = useState<StatusAtividade | 'todas'>('todas');
 
-  const filtradas = atividades.filter(a => {
-    if (statusFiltro !== 'todas' && a.status !== statusFiltro) return false;
-    if (search && !a.titulo.toLowerCase().includes(search.toLowerCase()) && !a.descricao.toLowerCase().includes(search.toLowerCase())) return false;
+  const filtered = atividades.filter(a => {
+    if (statusF !== 'todas' && a.status !== statusF) return false;
+    if (search && !a.titulo.toLowerCase().includes(search.toLowerCase())) return false;
     return true;
   });
 
   return (
-    <div className="p-6 max-w-7xl mx-auto">
-      <div className="flex items-center justify-between mb-6 animate-fade-in">
+    <div className="p-6 lg:p-8 max-w-[1400px] mx-auto">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 animate-fade-in">
         <div>
-          <div className="flex items-center gap-2 mb-1">
-            <Sparkles className="w-4 h-4 text-[#FFB703]" />
-            <span className="text-[10px] text-[#6B7280] tracking-widest uppercase font-medium">Atividades</span>
-          </div>
-          <h1 className="text-3xl font-bold" style={{ fontFamily: "'Playfair Display', serif" }}>{titulo}</h1>
+          <span className="label-overline text-[#F59E0B]">Atividades</span>
+          <h1 className="text-4xl font-black text-white mt-1" style={{ fontFamily: "'Playfair Display', serif" }}>{titulo}</h1>
         </div>
-        <button onClick={() => setModalOpen(true)} className="btn-primary flex items-center gap-2">
+        <button onClick={() => setModalOpen(true)} className="btn-primary">
           <Plus className="w-4 h-4" />
           Nova
         </button>
       </div>
 
-      <div className="flex flex-wrap items-center gap-3 mb-6 animate-fade-in">
-        <div className="relative flex-1 max-w-xs">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6B7280]" />
-          <input
-            type="text"
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-            placeholder="Buscar atividades..."
-            className="input-moderno pl-10"
-          />
+      <div className="flex flex-wrap items-center gap-3 mb-8 animate-fade-in delay-100">
+        <div className="relative flex-1 max-w-sm">
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#475569]" />
+          <input type="text" value={search} onChange={e => setSearch(e.target.value)} className="input-glass pl-10" placeholder="Buscar atividades..." />
         </div>
-        <div className="flex gap-1">
-          {statusOptions.map(s => (
-            <button
-              key={s.value}
-              onClick={() => setStatusFiltro(s.value)}
-              className="px-3 py-2 rounded-lg text-xs font-medium transition-all duration-200"
+        <div className="flex gap-1 bg-[rgba(255,255,255,0.02)] p-1 rounded-xl border border-[rgba(255,255,255,0.04)]">
+          {statusOpts.map(s => (
+            <button key={s.value} onClick={() => setStatusF(s.value)}
+              className="px-4 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200"
               style={{
-                background: statusFiltro === s.value ? 'rgba(255,255,255,0.06)' : 'transparent',
-                color: statusFiltro === s.value ? '#fff' : '#6B7280',
-                border: statusFiltro === s.value ? '1px solid rgba(255,255,255,0.08)' : '1px solid transparent',
-              }}
-            >
+                background: statusF === s.value ? 'rgba(255,255,255,0.06)' : 'transparent',
+                color: statusF === s.value ? '#F8FAFC' : '#475569',
+              }}>
               {s.label}
             </button>
           ))}
         </div>
+        <span className="text-[11px] text-[#475569] font-medium">
+          {filtered.length} de {atividades.length}
+        </span>
       </div>
 
-      {filtradas.length === 0 ? (
-        <div className="text-center py-16 text-[#6B7280] animate-fade-in">
-          <p className="text-lg mb-1">Nenhuma atividade encontrada</p>
-          <p className="text-sm">Crie uma nova atividade para começar</p>
+      {filtered.length === 0 ? (
+        <div className="glass-panel p-16 text-center animate-fade-in">
+          <ListFilter className="w-8 h-8 text-[#475569] mx-auto mb-3" />
+          <p className="text-[#64748B] font-medium mb-1">Nenhuma atividade encontrada</p>
+          <p className="text-[#475569] text-sm">Tente ajustar os filtros</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-          {filtradas.map((a, i) => (
+          {filtered.map((a, i) => (
             <div key={a.id} className="animate-fade-in" style={{ animationDelay: `${i * 0.05}s` }}>
               <AtividadeCard atividade={a} onUpdate={updateAtividade} onDelete={deleteAtividade} />
             </div>

@@ -5,31 +5,35 @@ interface HeaderProps {
 
 export function Header({ nome, onSignOut }: HeaderProps) {
   return (
-    <header className="glass" style={{ borderRadius: 0, borderLeft: 'none', borderRight: 'none', borderTop: 'none' }}>
-      <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-1.5">
-            <div className="w-3 h-3 rounded-full bg-[#FF6B35] shadow-[0_0_8px_rgba(255,107,53,0.5)]" />
-            <div className="w-3 h-3 rounded-full bg-[#4CAF50] shadow-[0_0_8px_rgba(76,175,80,0.5)]" />
-            <div className="w-3 h-3 rounded-full bg-[#FFB703] shadow-[0_0_8px_rgba(255,183,3,0.5)]" />
+    <header style={{
+      background: 'rgba(15, 17, 23, 0.85)',
+      backdropFilter: 'blur(24px) saturate(180%)',
+      WebkitBackdropFilter: 'blur(24px) saturate(180%)',
+      borderBottom: '1px solid rgba(255,255,255,0.06)',
+    }} className="sticky top-0 z-40">
+      <div className="max-w-[1600px] mx-auto px-6 h-16 flex items-center justify-between">
+        <div className="flex items-center gap-5">
+          <div className="flex items-center gap-2">
+            <div className="w-2.5 h-2.5 rounded-full bg-[#FF6B35] shadow-[0_0_12px_rgba(255,107,53,0.5)]" />
+            <div className="w-2.5 h-2.5 rounded-full bg-[#22C55E] shadow-[0_0_12px_rgba(34,197,94,0.5)]" />
+            <div className="w-2.5 h-2.5 rounded-full bg-[#F59E0B] shadow-[0_0_12px_rgba(245,158,11,0.5)]" />
           </div>
-          <div>
-            <h1 className="text-lg font-bold" style={{ fontFamily: "'Playfair Display', serif" }}>
-              Organizador<span className="text-[#FFB703]">.</span>
-            </h1>
-            <p className="text-[10px] text-[#6B7280] tracking-widest uppercase font-medium">Trabalho · Pessoal · CCB</p>
-          </div>
+          <h1 className="text-lg font-black tracking-tight" style={{ fontFamily: "'Playfair Display', serif" }}>
+            Organizador<span className="gradient-text-gold" style={{ WebkitTextFillColor: '#F59E0B', background: 'none' }}>.</span>
+          </h1>
         </div>
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2.5 bg-[#1F2833] px-3 py-1.5 rounded-full">
-            <div className="w-6 h-6 rounded-full bg-gradient-to-br from-[#FFB703] to-[#FF8C42] flex items-center justify-center text-[10px] font-bold text-[#0B0C10]">
+
+        <div className="flex items-center gap-5">
+          <div className="flex items-center gap-3 bg-[rgba(255,255,255,0.03)] px-4 py-2 rounded-full border border-[rgba(255,255,255,0.05)]">
+            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#F59E0B] to-[#D97706] flex items-center justify-center text-xs font-bold text-[#0F172A] shadow-[0_0_16px_rgba(245,158,11,0.3)]">
               {nome.charAt(0).toUpperCase()}
             </div>
-            <span className="text-sm text-[#A0A8B3]">{nome.split(' ')[0]}</span>
+            <span className="text-sm font-medium text-[#94A3B8]">{nome}</span>
           </div>
+
           <button
             onClick={onSignOut}
-            className="text-sm text-[#6B7280] hover:text-white transition-colors px-3 py-1.5 rounded-full hover:bg-[#1F2833]"
+            className="text-xs text-[#475569] hover:text-[#94A3B8] transition-colors px-3 py-1.5 rounded-full hover:bg-[rgba(255,255,255,0.03)]"
           >
             Sair
           </button>
